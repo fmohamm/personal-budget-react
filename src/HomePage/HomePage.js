@@ -1,6 +1,48 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import axios from 'axios';
+import {Chart} from 'react-chartjs-2';
 
-function AboutPage() {
+function HomePage() {
+useEffect(() => {
+var dataSource = {
+    datasets: [
+      {
+        data: [],
+        backgroundColor: [
+          "yellow",
+          "orange",
+          "magenta",
+          "red",
+          "green",
+          "blue",
+          "purple",
+        ],
+      },
+    ],
+    labels: [],
+  };
+
+  function createChart() {
+    var ctx = document.getElementById("myChart").getContext("2d");
+    var myPieChart = new Chart(ctx, {
+      type: "pie",
+      data: dataSource,
+    });
+  }
+
+  function getBudget() {
+    axios.get("http://localhost:4000/budget").then(function (res) {
+      console.log(res.data);
+      for (var i = 0; i < res.data.myBudget.length; i++) {
+        dataSource.datasets[0].data[i] = res.data.myBudget[i].budget;
+        dataSource.labels[i] = res.data.myBudget[i].title;
+      }
+      createChart();
+    });
+  }
+  getBudget();
+})
+
   return (
     <main><div className="container center">
     <div className="page-area">
@@ -72,4 +114,4 @@ function AboutPage() {
   );
 }
 
-export default AboutPage;
+export default HomePage;
